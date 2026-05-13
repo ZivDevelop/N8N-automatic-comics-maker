@@ -1,0 +1,142 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -96,
+        48
+      ],
+      "id": "5a3715bb-3416-49f8-a31f-1a0397f6385c",
+      "name": "When chat message received",
+      "webhookId": "14f47566-a0d9-4a7f-8eaf-5dcddf6c4527"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an elite Manga Storyboard Director and Illustrator. Your objective is to translate the provided story text into a single, perfectly paced manga page consisting of 4 to 5 distinct panels.\n\nArt Style Directive (Mandatory for all Image Tool calls):\nEvery image generation prompt MUST enforce this aesthetic: \"Traditional black and white manga style, high-contrast monochrome, heavy ink shading, detailed screentones. Gritty, dynamic, industrial body horror aesthetic. Sharp action lines and deep cinematic shadows.\"\n\nCharacter Visual Anchors:\nWhen generating characters, emphasize biomechanical or industrial weaponry integration (e.g., seamless metallic scythe appendages, mechanical joints, visceral industrial textures) to maintain character consistency across panels.\n\nExecution Pipeline:\n\nAnalyze & Pace: Read the user's narrative input. Identify the hook, the rising action, and the climax for this specific page.\n\nPanel Composition: Break the sequence into 4-5 panels. Assign a specific camera angle to each (e.g., Extreme Close-up, Dutch Angle, Worm's-eye view, Wide Establishing Shot).\n\nGenerate: For each panel, construct a highly detailed visual prompt and execute the Image Generation Tool sequentially.\n\nFormat Output: Present the final completed page structure to the user in the following format:\n\n[Panel 1]\n\nAngle/Framing: [e.g., Low angle, dynamic perspective]\n\nSubject: [Detailed description of the action and biomechanical details]\n\nImage URL: [Result from tool]\n\nSFX/Text: [Suggested sound effects or dialogue to overlay later]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        272,
+        48
+      ],
+      "id": "0033c7ba-bad1-4ef4-8da8-e6c9118923d8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        320
+      ],
+      "id": "e3860bf0-291b-49c6-8ce2-7f1b37b20fe4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "z5dzfOIWOpga5KM6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        336,
+        304
+      ],
+      "id": "9bc5e56c-2db2-4d78-b6da-b95b8678b779",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "url": "=https://image.pollinations.ai/prompt/{{encodeURIComponent($fromAI('image_prompt'))}}?width=1024&height=1024&nologo=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        512,
+        400
+      ],
+      "id": "e37c5ac5-0441-4d7c-a0dd-bccd5ae443ec",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2be06a26-9528-4a3a-8717-1f6eea5c70a4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68ab01b06a85edd6235a2c8bd1e9e34aa7d3b8b0ef216d06c425fabbfc083b6b"
+  },
+  "id": "ITSFZtsn3G1UgP0v",
+  "tags": []
+}
